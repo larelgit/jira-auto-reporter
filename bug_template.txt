@@ -1,0 +1,20 @@
+Title: Player falls through the bridge texture
+Priority: High
+Labels: collision, gameplay, regression
+---
+Environment: PC, Windows 11, build v0.3.42-alpha
+
+Steps to reproduce:
+1. Load the "Forest River" level.
+2. Walk to the stone bridge (coordinates: X=1200, Y=340).
+3. Stand on the left edge of the bridge.
+4. Jump (spacebar).
+
+Expected result:
+The player lands on the bridge and stays on it.
+
+Actual result:
+The player falls through the bridge texture and falls into the water/void.
+Reproduces in 8 out of 10 attempts.
+
+Priority: High (blocks level progression).

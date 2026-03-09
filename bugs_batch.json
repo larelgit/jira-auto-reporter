@@ -1,0 +1,20 @@
+[
+  {
+    "summary": "Crash when opening inventory with a full backpack",
+    "description": "Steps:\n1. Fill the backpack to 64/64.\n2. Press I.\n\nResult: Crash to Desktop.\nLog: NullReferenceException in InventoryUI.cs:142",
+    "priority": "Highest",
+    "labels": ["crash", "inventory", "blocker"]
+  },
+  {
+    "summary": "Quest text 'Find the sword' is not translated to Russian",
+    "description": "In Russian localization it shows: 'Find the sword of ancient king'\nTranslation expected.",
+    "priority": "Low",
+    "labels": ["localization", "ru"]
+  },
+  {
+    "summary": "Gunshot sound does not play after reloading",
+    "description": "Steps:\n1. Shoot until the magazine is empty.\n2. Reload (R).\n3. Shoot again.\n\nThe sound of the first shot after reloading is missing.",
+    "priority": "Medium",
+    "labels": ["audio", "weapons"]
+  }
+]
