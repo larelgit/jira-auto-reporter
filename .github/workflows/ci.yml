@@ -1,6 +1,6 @@
 # ============================================================
-#  CI Pipeline — Lint, Syntax Check, Unit Tests
-#  Triggers: push to main, any pull request
+#  CI Pipeline — Lint, Syntax Check, Unit Tests.
+#  Triggers: push to main, any pull request.
 # ============================================================
 name: CI
 
