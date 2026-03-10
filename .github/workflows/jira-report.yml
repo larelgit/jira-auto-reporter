@@ -1,0 +1,94 @@
+# ============================================================
+#  Jira Reporter — manually dispatch a bug to real Jira
+#  Trigger: manual only (workflow_dispatch)
+# ============================================================
+name: 📝 Report Bug to Jira
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Bug title (summary)"
+        required: true
+        type: string
+      description:
+        description: "Bug description (steps to reproduce)"
+        required: true
+        type: string
+      priority:
+        description: "Priority"
+        required: true
+        default: "Medium"
+        type: choice
+        options:
+          - Highest
+          - High
+          - Medium
+          - Low
+          - Lowest
+      labels:
+        description: "Labels (comma-separated: crash,regression,ui)"
+        required: false
+        type: string
+      dry_run:
+        description: "Dry run? (don't actually create)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    name: 🐛 Create Jira Bug
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: ⬇️ Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔧 Prepare labels
+        id: labels
+        run: |
+          RAW="${{ github.event.inputs.labels }}"
+          if [ -n "$RAW" ]; then
+            # Convert "crash,regression,ui" → "--labels crash regression ui"
+            LABELS=$(echo "$RAW" | tr ',' ' ')
+            echo "args=--labels $LABELS" >> "$GITHUB_OUTPUT"
+          else
+            echo "args=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 🐛 Send bug to Jira
+        env:
+          JIRA_DOMAIN: ${{ secrets.JIRA_DOMAIN }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
+        run: |
+          CMD="python jira_reporter.py"
+          CMD="$CMD --title \"${{ github.event.inputs.title }}\""
+          CMD="$CMD --desc \"${{ github.event.inputs.description }}\""
+          CMD="$CMD --priority ${{ github.event.inputs.priority }}"
+
+          if [ -n "${{ steps.labels.outputs.args }}" ]; then
+            CMD="$CMD ${{ steps.labels.outputs.args }}"
+          fi
+
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            CMD="$CMD --dry-run"
+          fi
+
+          echo "📋 Running: $CMD"
+          eval $CMD
