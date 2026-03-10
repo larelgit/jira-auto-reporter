@@ -24,3 +24,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Tests
+.pytest_cache/
+htmlcov/
+.coverage
