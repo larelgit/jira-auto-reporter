@@ -38,10 +38,10 @@ class JiraConfig:
             missing.append("JIRA_PROJECT_KEY")
 
         if missing:
-            print(f"\033[91m❌ Configuration Error!\033[0m")
+            print("\033[91m❌ Configuration Error!\033[0m")
             print(f"   Environment variables not set: {', '.join(missing)}")
-            print(f"   Copy .env.example to .env and fill in the values:")
-            print(f"   cp .env.example .env")
+            print("   Copy .env.example to .env and fill in the values:")
+            print("   cp .env.example .env")
             sys.exit(1)
 
     @property
