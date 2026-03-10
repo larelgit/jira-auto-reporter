@@ -1,0 +1,90 @@
+# ============================================================
+#  Dry Run — verify CLI works without sending to Jira
+#  Triggers: push to main, manual
+# ============================================================
+name: Dry Run CLI
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "*.py"
+      - "requirements.txt"
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Bug title for dry-run test"
+        required: false
+        default: "CI Test Bug — please ignore"
+      priority:
+        description: "Priority"
+        required: false
+        default: "Medium"
+        type: choice
+        options:
+          - Highest
+          - High
+          - Medium
+          - Low
+          - Lowest
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    name: 🏃 Dry Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: ⬇️ Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🧪 Dry-run — single bug (manual args)
+        env:
+          JIRA_DOMAIN: "ci-test.atlassian.net"
+          JIRA_EMAIL: "ci@example.com"
+          JIRA_API_TOKEN: "fake-token"
+          JIRA_PROJECT_KEY: "TEST"
+        run: |
+          python jira_reporter.py \
+            --title "${{ github.event.inputs.title || 'CI Dry Run Test' }}" \
+            --desc "Automated dry-run from GitHub Actions (commit ${{ github.sha }})" \
+            --priority "${{ github.event.inputs.priority || 'Medium' }}" \
+            --labels ci-test automated \
+            --dry-run
+
+      - name: 🧪 Dry-run — from template file
+        env:
+          JIRA_DOMAIN: "ci-test.atlassian.net"
+          JIRA_EMAIL: "ci@example.com"
+          JIRA_API_TOKEN: "fake-token"
+          JIRA_PROJECT_KEY: "TEST"
+        run: |
+          python jira_reporter.py \
+            --from-file bug_template.txt \
+            --dry-run
+
+      - name: 🧪 Dry-run — batch from JSON
+        env:
+          JIRA_DOMAIN: "ci-test.atlassian.net"
+          JIRA_EMAIL: "ci@example.com"
+          JIRA_API_TOKEN: "fake-token"
+          JIRA_PROJECT_KEY: "TEST"
+        run: |
+          python jira_reporter.py \
+            --batch bugs_batch.json \
+            --dry-run
+
+      - name: ✅ All dry-runs passed
+        run: echo "🎉 CLI works correctly in all modes!"
