@@ -13,7 +13,7 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/jira-auto-reporter.git
+git clone https://github.com/larelgit/jira-auto-reporter.git
 cd jira-auto-reporter
 ```
 
