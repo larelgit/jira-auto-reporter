@@ -58,7 +58,7 @@ jobs:
 
       - name: ⚡ Ruff — fast linter
         run: |
-          ruff check . --output-format=github || true
+          ruff check . --output-format=github
 
   syntax-check:
     name: 🧪 Syntax & Import Check
