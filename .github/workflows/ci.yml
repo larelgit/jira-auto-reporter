@@ -87,7 +87,7 @@ jobs:
 
       - name: 📋 Check imports resolve
         run: |
-          python -c "from config import JiraConfig; print('✅ config.py imports OK')" || true
+          python -c "from config import JiraConfig; print('✅ config.py imports OK')"
           python -c "from jira_client import JiraClient, Colors; print('✅ jira_client.py imports OK')"
 
   test:
